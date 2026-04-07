@@ -202,6 +202,12 @@ h4 {
   color: var(--muted);
 }
 
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .primary-button,
 .secondary-button {
   display: inline-flex;
@@ -290,6 +296,28 @@ main {
   font-size: 0.92rem;
   font-weight: 700;
   color: #a62b1f;
+}
+
+.example-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: -4px;
+}
+
+.example-button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fffaf6;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.example-button:hover,
+.example-button:focus-visible {
+  background: #fff1e9;
 }
 
 .planner-form input,
@@ -544,6 +572,15 @@ progress::-moz-progress-bar {
 
   .primary-button,
   .secondary-button {
+    width: 100%;
+  }
+
+  .hero-actions,
+  .example-buttons {
+    flex-direction: column;
+  }
+
+  .example-button {
     width: 100%;
   }
 }

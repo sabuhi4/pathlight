@@ -71,6 +71,32 @@ const planKindLabels: Record<PlanKind, string> = {
   ops: "Operations cleanup",
 };
 
+const exampleGoals: Array<{
+  label: string;
+  goal: string;
+  planKind: PlanKind;
+  effort: Effort;
+}> = [
+  {
+    label: "Launch example",
+    goal: "Launch my event landing page",
+    planKind: "launch",
+    effort: "steady",
+  },
+  {
+    label: "Study example",
+    goal: "Prepare for my frontend interview",
+    planKind: "study",
+    effort: "steady",
+  },
+  {
+    label: "Habit example",
+    goal: "Build a daily writing habit",
+    planKind: "habit",
+    effort: "light",
+  },
+];
+
 const STORAGE_KEY = "pathlight-planner-state";
 
 function normalizeText(value: string, maxLength: number) {
@@ -272,6 +298,40 @@ function App() {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
+  function applyExample(example: (typeof exampleGoals)[number]) {
+    setForm((current) => ({
+      ...current,
+      goal: example.goal,
+      planKind: example.planKind,
+      effort: example.effort,
+      deadline: current.deadline || "7 days",
+    }));
+    setFormError("");
+    setAnnouncement(`${example.label} loaded. You can generate the plan now.`);
+    window.requestAnimationFrame(() => {
+      goalInputRef.current?.focus();
+    });
+  }
+
+  function tryExamplePlan() {
+    const demoForm: PlanForm = {
+      userName: form.userName,
+      goal: "Launch my event landing page",
+      deadline: "7 days",
+      effort: "steady",
+      planKind: "launch",
+      constraint: "Limited time after work",
+    };
+
+    setForm(demoForm);
+    setFormError("");
+    setAnnouncement("Example plan loaded. Review or generate it now.");
+
+    window.requestAnimationFrame(() => {
+      goalInputRef.current?.focus();
+    });
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -370,9 +430,19 @@ function App() {
             <li>2. Generate one sprint plan.</li>
             <li>3. Complete every checklist step.</li>
           </ol>
-          <button type="button" className="primary-button" onClick={focusPlanner}>
-            Create My Plan
-          </button>
+          <div className="hero-actions">
+            <button type="button" className="primary-button" onClick={focusPlanner}>
+              Create My Plan
+            </button>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={tryExamplePlan}
+              data-testid="try-example-plan-button"
+            >
+              Try Example Plan
+            </button>
+          </div>
         </div>
         <aside className="hero-card" aria-label="Product summary">
           <h2>What this app does</h2>
@@ -437,6 +507,19 @@ function App() {
             <p id="goal-help" className="field-help">
               Use one concrete finish line, not a broad wishlist. Long text will be shortened.
             </p>
+            <div className="example-buttons" aria-label="Example goals">
+              {exampleGoals.map((example) => (
+                <button
+                  key={example.label}
+                  type="button"
+                  className="example-button"
+                  onClick={() => applyExample(example)}
+                  data-testid={`example-${example.planKind}-button`}
+                >
+                  {example.label}
+                </button>
+              ))}
+            </div>
             {formError ? (
               <p id="goal-error" className="field-error" role="alert">
                 {formError}

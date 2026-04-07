@@ -420,11 +420,8 @@ function App() {
       <header className="hero">
         <div className="hero-copy">
           <p className="eyebrow">Pathlight</p>
-          <h1>Turn one goal into a focused action plan in under a minute.</h1>
-          <p className="lede">
-            Describe what you want to finish, choose your pace, and get a clear
-            four-step sprint with a visible success state.
-          </p>
+          <h1>Turn one goal into a clear 4-step sprint.</h1>
+          <p className="lede">Fill the form, generate the plan, then complete the checklist.</p>
           <ol className="hero-steps" aria-label="How Pathlight works">
             <li>1. Fill in one short form.</li>
             <li>2. Generate one sprint plan.</li>
@@ -445,12 +442,12 @@ function App() {
           </div>
         </div>
         <aside className="hero-card" aria-label="Product summary">
-          <h2>What this app does</h2>
-          <p>Pathlight creates a short, practical sprint for one specific goal.</p>
+          <h2>One job, one finish line</h2>
+          <p>Pathlight builds a short sprint for one concrete goal.</p>
           <ul>
             <li>One form</li>
             <li>One generated plan</li>
-            <li>One checklist that ends in a clear completion message</li>
+            <li>One checklist with a clear completion state</li>
           </ul>
         </aside>
       </header>
@@ -462,10 +459,7 @@ function App() {
             <h2 id="planner-heading" ref={formHeadingRef} tabIndex={-1}>
               Build your sprint plan
             </h2>
-            <p>
-              Fill in the form, submit once, and Pathlight will generate a plan
-              you can complete step by step.
-            </p>
+            <p>Submit once to generate a checklist you can finish step by step.</p>
           </div>
 
           <form className="planner-form" onSubmit={handleSubmit}>
@@ -481,7 +475,7 @@ function App() {
               aria-describedby="name-help"
             />
             <p id="name-help" className="field-help">
-              Optional. If you skip this, the plan will address you as Builder.
+              Optional. If empty, the plan uses Builder.
             </p>
 
             <label htmlFor="goal">What do you want to finish?</label>
@@ -505,7 +499,7 @@ function App() {
               data-testid="goal-input"
             />
             <p id="goal-help" className="field-help">
-              Use one concrete finish line, not a broad wishlist. Long text will be shortened.
+              Use one concrete finish line. Long text will be shortened.
             </p>
             <div className="example-buttons" aria-label="Example goals">
               {exampleGoals.map((example) => (
@@ -540,7 +534,7 @@ function App() {
               data-testid="deadline-input"
             />
             <p id="deadline-help" className="field-help">
-              Use a short phrase such as 3 days, 1 week, or this weekend.
+              Use a short phrase like 3 days or 1 week.
             </p>
 
             <label htmlFor="planKind">Plan type</label>
@@ -560,7 +554,7 @@ function App() {
               <option value="ops">Operations cleanup</option>
             </select>
             <p id="plan-type-help" className="field-help">
-              Choose the type that best matches your goal so the checklist fits the task.
+              Choose the closest fit for your goal.
             </p>
 
             <fieldset className="effort-fieldset" aria-describedby="effort-help">
@@ -600,7 +594,7 @@ function App() {
               </label>
             </fieldset>
             <p id="effort-help" className="field-help">
-              This controls the pace recommendation shown in your generated plan.
+              This changes the pace recommendation.
             </p>
 
             <label htmlFor="constraint">Constraint or blocker</label>
@@ -615,7 +609,7 @@ function App() {
               data-testid="constraint-input"
             />
             <p id="constraint-help" className="field-help">
-              Optional. Add limits such as time, budget, or missing resources.
+              Optional. Add limits like time or budget.
             </p>
 
             <div className="form-actions">
@@ -638,7 +632,7 @@ function App() {
               </button>
             </div>
             <p id="generate-plan-note" className="field-help">
-              The main path is: generate a plan, then complete all checklist steps.
+              Main path: generate a plan, then complete all steps.
             </p>
           </form>
         </section>
@@ -701,7 +695,7 @@ function App() {
                   aria-label="Submitted plan details"
                   data-testid="submitted-summary"
                 >
-                  <h4>Submitted details</h4>
+                  <h4>Plan setup</h4>
                   <dl className="summary-grid">
                     <div>
                       <dt>Goal</dt>
@@ -778,7 +772,7 @@ function App() {
                       This is the intended success state of the app.
                     </p>
                     <p className="completion-note">
-                      Congratulations. Your sprint is fully complete and ready to reset or start again.
+                      All steps are complete. You can reset and start a new sprint.
                     </p>
                     <button
                       type="button"

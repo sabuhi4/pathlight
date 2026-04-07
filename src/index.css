@@ -273,6 +273,18 @@ main {
   color: var(--muted);
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .field-error {
   margin: -6px 0 0;
   font-size: 0.92rem;
@@ -471,6 +483,11 @@ progress::-moz-progress-bar {
   padding: 20px;
   background: var(--success-soft);
   border-color: rgba(31, 122, 79, 0.24);
+}
+
+.completion-note {
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .page-footer {

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import "./index.css";
 
@@ -35,6 +35,13 @@ type SubmittedSnapshot = {
   constraint: string;
 };
 
+type PersistedPlannerState = {
+  form: PlanForm;
+  plan: PlanResult | null;
+  submitted: SubmittedSnapshot | null;
+  completed: string[];
+};
+
 const defaultForm: PlanForm = {
   userName: "",
   goal: "",
@@ -63,6 +70,8 @@ const planKindLabels: Record<PlanKind, string> = {
   habit: "Habit reset",
   ops: "Operations cleanup",
 };
+
+const STORAGE_KEY = "pathlight-planner-state";
 
 function normalizeText(value: string, maxLength: number) {
   return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
@@ -213,11 +222,50 @@ function App() {
   const completedCount = completed.length;
   const totalSteps = plan?.steps.length ?? 0;
   const isComplete = Boolean(plan) && totalSteps > 0 && completedCount === totalSteps;
-  const progressPercent =
-    totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as PersistedPlannerState;
+      if (parsed.form) {
+        setForm(parsed.form);
+      }
+      if (parsed.plan) {
+        setPlan(parsed.plan);
+      }
+      if (parsed.submitted) {
+        setSubmitted(parsed.submitted);
+      }
+      if (Array.isArray(parsed.completed)) {
+        setCompleted(parsed.completed);
+      }
+      if (parsed.plan) {
+        setAnnouncement("Previous sprint restored. You can keep going.");
+      }
+    } catch {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    const payload: PersistedPlannerState = {
+      form,
+      plan,
+      submitted,
+      completed,
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }, [form, plan, submitted, completed]);
 
   function focusPlanner() {
-    formHeadingRef.current?.focus();
+    formHeadingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.requestAnimationFrame(() => {
+      goalInputRef.current?.focus();
+    });
   }
 
   function handleChange<K extends keyof PlanForm>(key: K, value: PlanForm[K]) {
@@ -291,6 +339,7 @@ function App() {
     setFormError("");
     setIsSubmitting(false);
     setAnnouncement("Planner reset. You can start a new sprint now.");
+    window.localStorage.removeItem(STORAGE_KEY);
     window.requestAnimationFrame(() => {
       focusPlanner();
     });
@@ -528,6 +577,9 @@ function App() {
             <p data-testid="status-message" role="status" aria-live="polite">
               {announcement}
             </p>
+            <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+              {announcement}
+            </p>
           </div>
 
           {plan ? (
@@ -548,15 +600,15 @@ function App() {
                 </label>
                 <progress
                   id="completion-progress"
-                  max={100}
-                  value={progressPercent}
+                  max={totalSteps || 1}
+                  value={completedCount}
                   data-testid="completion-progress"
                   aria-describedby="completion-progress-text"
                 >
-                  {progressPercent}%
+                  {completedCount} of {totalSteps} steps complete
                 </progress>
                 <p id="completion-progress-text" className="field-help">
-                  {progressPercent}% complete
+                  {completedCount} of {totalSteps} steps complete
                 </p>
               </div>
 
@@ -595,9 +647,11 @@ function App() {
               ) : null}
 
               <p>{plan.summary}</p>
-              <p className="success-signal">
-                <strong>Finish line:</strong> {plan.successSignal}
-              </p>
+              {!isComplete ? (
+                <p className="success-signal">
+                  <strong>Finish line:</strong> {plan.successSignal}
+                </p>
+              ) : null}
 
               <ol
                 className="checklist"
@@ -639,6 +693,9 @@ function App() {
                     <p>
                       You finished every step for <strong>{submitted?.goal ?? form.goal}</strong>.
                       This is the intended success state of the app.
+                    </p>
+                    <p className="completion-note">
+                      Congratulations. Your sprint is fully complete and ready to reset or start again.
                     </p>
                     <button
                       type="button"
